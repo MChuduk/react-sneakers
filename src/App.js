@@ -5,6 +5,7 @@ import React from "react";
 
 function App() {
   const [items, setItems] = React.useState([]);
+  const [cartItems, setCartItems] = React.useState([]);
   const [isCartOpened, setIsCartOpened] = React.useState(false);
 
   React.useEffect(() => {
@@ -13,9 +14,19 @@ function App() {
     .then((items) => setItems(items));
   }, []);
 
+  const onAddToCart = (item) => {
+    setCartItems(prev => {
+      if (prev.includes(item)) {
+        prev = prev.filter((x) => x !== item)
+        return prev;
+      }
+      return [...prev, item];
+    });
+  }
+
   return (
     <div className="wrapper clear">
-      {isCartOpened && <Drawer onClose={() => setIsCartOpened(false)} />}
+      {isCartOpened && <Drawer items={cartItems} onClose={() => setIsCartOpened(false)} />}
       <Header onClickCart={() => setIsCartOpened(true)} />
       <div className="content p-40">
         <div className="d-flex align-center justify-between mb-40">
@@ -33,7 +44,7 @@ function App() {
               imageUrl={x.imageUrl}
               price={x.price}
               onFavourite={() => ""}
-              onPlus={() => ""}
+              onPlus={() => onAddToCart(x)}
             />
           ))}
         </div>
